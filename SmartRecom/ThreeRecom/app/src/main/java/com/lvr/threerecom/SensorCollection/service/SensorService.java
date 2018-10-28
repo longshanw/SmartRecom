@@ -1,4 +1,4 @@
-package com.lvr.threerecom.sensorcollection.service;
+package com.lvr.threerecom.SensorCollection.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -18,7 +18,8 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-
+import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.api.TagAliasCallback;
 import com.lvr.threerecom.R;
 import com.lvr.threerecom.app.AppApplication;
 import com.lvr.threerecom.app.AppConstantValue;
@@ -33,9 +34,6 @@ import com.lvr.threerecom.utils.SPUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
-
-import cn.jpush.android.api.JPushInterface;
-import cn.jpush.android.api.TagAliasCallback;
 
 /**
  * Created by lvr on 2017/5/22.
@@ -62,7 +60,7 @@ public class SensorService extends Service implements SensorEventListener {
     private SensorManager sensorManager;
     private int state = AppConstantValue.SENSOR_STATE_ERROR;
     private static final int MSG_SET_ALIAS = 1001;
-    private static final int MSG_STATE_CHANGE =404;
+    private static final int MSG_STATE_CHANGE = 404;
     private static String[] mStrings = {"无意义", "坐着", "站着", "躺着", "走路", "骑车", "上楼梯", "下楼梯", "跑步"};
     private int[] sensor_collect = new int[2];
     private int count;
@@ -73,7 +71,7 @@ public class SensorService extends Service implements SensorEventListener {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case MSG_SET_ALIAS:{
+                case MSG_SET_ALIAS: {
                     // 调用 JPush 接口来设置别名。
                     JPushInterface.setAliasAndTags(getApplicationContext(),
                             (String) msg.obj,
@@ -81,26 +79,26 @@ public class SensorService extends Service implements SensorEventListener {
                             mAliasCallback);
                     break;
                 }
-                case MSG_STATE_CHANGE:{
+                case MSG_STATE_CHANGE: {
                     //状态改变了
                     String curState;
-                    if(state==1||state==0){
-                        curState ="坐着/站着";
-                    }else{
-                        curState = mStrings[state+1];
+                    if (state == 1 || state == 0) {
+                        curState = "坐着/站着";
+                    } else {
+                        curState = mStrings[state + 1];
                     }
-                    Toast.makeText(AppApplication.getAppContext(),"当前状态是："+curState,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AppApplication.getAppContext(), "当前状态是：" + curState, Toast.LENGTH_SHORT).show();
                     Notification.Builder mBuilder = new Notification.Builder(SensorService.this)
                             .setSmallIcon(R.drawable.icon_launcher)
                             .setContentTitle("SmartRecom为你推荐")
-                            .setContentText("您当前的状态为："+curState);
+                            .setContentText("您当前的状态为：" + curState);
                     //创建点跳转的Intent(这个跳转是跳转到通知详情页)
                     Intent intent = null;
-                    if(curState.equals("躺着")){
+                    if (curState.equals("躺着")) {
                         intent = new Intent(SensorService.this, RecomMovieActivity.class);
-                    }else if(curState.equals("跑步")){
+                    } else if (curState.equals("跑步")) {
                         intent = new Intent(SensorService.this, RecomMusicActivity.class);
-                    }else{
+                    } else {
                         intent = new Intent(SensorService.this, MainActivity.class);
                     }
 
@@ -228,18 +226,18 @@ public class SensorService extends Service implements SensorEventListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String response = httpUtil.post(Constant.CLASSIFY, input);
+                String response = HttpUtil.post(Constant.CLASSIFY, input);
                 Log.i(Constant.tag, response);
 //                System.out.println(Thread.currentThread().getName() + "发送数据");
                 if ("-1".equals(response)) {
                     System.out.println("上传数据无效");
                 } else {
-                    synchronized (this){
+                    synchronized (this) {
 
-                        sensor_collect[count]=Integer.parseInt(response);
+                        sensor_collect[count] = Integer.parseInt(response);
                         count++;
                         if (count == 2) {
-                            count=0;
+                            count = 0;
                             if (isSteady()) {
                                 //当前状态
                                 int cur_state = sensor_collect[0];
@@ -262,12 +260,13 @@ public class SensorService extends Service implements SensorEventListener {
 
     /**
      * 判断3次返回的状态码是否一致
+     *
      * @return
      */
     private boolean isSteady() {
-        if(sensor_collect[0]==sensor_collect[1]){
+        if (sensor_collect[0] == sensor_collect[1]) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -344,11 +343,12 @@ public class SensorService extends Service implements SensorEventListener {
         //启动前台服务
         startForeground(0, notification);
     }
+
     //Jpush设置别名。
     // TODO: 2017/5/20 退出之前 把别名设置为空 反之继续接收推送
     private void setAlias() {
         //// TODO: 2017/5/20 用户id 暂时写死为1  只能是字母，数字
-        String alias = mUserid+"";
+        String alias = mUserid + "";
         if (TextUtils.isEmpty(alias)) {
             return;
         }

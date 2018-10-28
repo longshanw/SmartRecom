@@ -9,20 +9,18 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
-
+import butterknife.BindView;
 import com.lvr.threerecom.R;
 import com.lvr.threerecom.adapter.MovieViewPagerAdapter;
 import com.lvr.threerecom.base.BaseActivity;
 import com.lvr.threerecom.base.BaseFragment;
 import com.lvr.threerecom.bean.FabSrcollBean;
 import com.lvr.threerecom.utils.MyUtils;
+import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import butterknife.BindView;
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by lvr on 2017/4/22.

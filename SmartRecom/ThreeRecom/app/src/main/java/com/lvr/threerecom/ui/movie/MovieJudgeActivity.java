@@ -7,13 +7,11 @@ import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import butterknife.BindView;
 import com.lvr.threerecom.R;
 import com.lvr.threerecom.base.BaseActivity;
 import com.lvr.threerecom.ui.movie.presenter.Impl.MovieJudgePresenterImpl;
 import com.lvr.threerecom.ui.movie.view.MovieJudgeView;
-
-import butterknife.BindView;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 /**
